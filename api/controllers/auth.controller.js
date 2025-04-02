@@ -7,19 +7,16 @@ import jwt from "jsonwebtoken";
 export const signup = async (req, res, next) => {
   const { username, email, password, confirmPassword } = req.body;
 
-  // Check if passwords match
   if (password !== confirmPassword) {
     return next(errorHandle(400, "Passwords do not match!!!"));
   }
 
   try {
-    // Check if the email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return next(errorHandle(400, "This email is already taken"));
     }
 
-    // Hash password and create new user
     const hashpassword = bcryptjs.hashSync(password, 10);
     const newUser = new User({ username, email, password: hashpassword });
 
@@ -36,14 +33,12 @@ export const signup = async (req, res, next) => {
 export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    // Find the user by email
     const validUser = await User.findOne({ email });
     if (!validUser) {
       console.error("User  not found");
       return next(new Error("User  not found!!"));
     }
 
-    // Check the password
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
       console.error("Wrong credentials");
@@ -60,7 +55,7 @@ export const login = async (req, res, next) => {
       .status(200)
       .json(rest);
   } catch (error) {
-    console.error("Login error:", error); // Log the error for debugging
+    console.error("Login error:", error);
     next(error);
   }
 };
