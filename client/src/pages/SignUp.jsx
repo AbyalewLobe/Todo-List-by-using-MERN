@@ -12,6 +12,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting Form Data:", formData);
+
     try {
       setLoadding(true);
       const res = await fetch("http://localhost:3000/api/auth/signup", {
@@ -79,6 +80,16 @@ export default function SignUp() {
               onChange={handleChange}
             />
           </div>
+          <div className="mb-4">
+            <label className="block mb-2 font-semibold">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Enter your password Again"
+              className="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none"
+              onChange={handleChange}
+            />
+          </div>
 
           <button
             disabled={loadding}
@@ -86,6 +97,7 @@ export default function SignUp() {
           >
             {loadding ? "Loadind" : "Sign Up"}
           </button>
+          <p className="text-red-700">{error}</p>
 
           <p className="text-center mt-4">
             Already have an account?
