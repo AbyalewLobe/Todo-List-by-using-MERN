@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 
 export default function AddTask({ tasks, setTasks }) {
   const [title, setTitle] = useState("");
-  const [catagories, setCatagories] = useState("work");
+  const [catagories, setCatagories] = useState("Work");
   const [date, setDate] = useState("00:00");
   const [priority, setPriority] = useState("Low");
   const [description, setDescription] = useState("");
-  const [subtask, setSubTask] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [subtask, setSubTask] = useState("");
+  const [tags, setTags] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,6 +27,13 @@ export default function AddTask({ tasks, setTasks }) {
     setTasks((prevTasks) => [...prevTasks, newTask]);
     // console.log(tasks);
     console.log([...tasks, newTask]);
+    setTitle("");
+    setCatagories("work");
+    setDate("00:00");
+    setPriority("Low");
+    setDescription("");
+
+    setTags([]);
   };
 
   return (
