@@ -7,8 +7,8 @@ export default function AddTask({ tasks, setTasks }) {
   const [date, setDate] = useState("00:00");
   const [priority, setPriority] = useState("Low");
   const [description, setDescription] = useState("");
-  const [subtask, setSubTask] = useState("");
-  const [tags, setTags] = useState("");
+  const [subtask, setSubTask] = useState([]);
+  const [tags, setTags] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,8 +21,8 @@ export default function AddTask({ tasks, setTasks }) {
       date,
       priority,
       description,
-      subtask,
-      tags,
+      subtask: subtask.split(/[\/\s]+/),
+      tags: tags.split(/[\/\s]+/),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
     // console.log(tasks);
