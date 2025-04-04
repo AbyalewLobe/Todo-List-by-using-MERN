@@ -1,8 +1,10 @@
 import React from "react";
 import NavBar from "../components/NavBar";
-import Card from "../components/cards";
+
 import TodoCard from "../components/TodoCard";
-export default function Home() {
+import { Link } from "react-router-dom";
+
+export default function Home({ tasks }) {
   return (
     <>
       <NavBar />
@@ -14,24 +16,24 @@ export default function Home() {
           <p className="mb-6 text-sm">Manage your tasks efficiently.</p>
           <div className="mb-8 flex flex-col gap-2">
             <h3 className="mb-2 text-lg font-semibold">Filters</h3>
-            <button className="w-full py-2  bg-[#357abd] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
               Today
             </button>
-            <button className="w-full py-2  bg-[#357abd] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
               Scheduled
             </button>
-            <button className="w-full py-2  bg-[#357abd] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
               All Tasks
             </button>
-            <button className="w-full py-2 bg-[#357abd] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2 bg-[#1b3d60]  text-white rounded-md transition hover:bg-white hover:text-blue-500">
               Completed
             </button>
           </div>
           {/* ////// catagories */}
           <div className="mb-8 flex flex-col gap-2">
             <h3 className="mb-2 text-lg font-semibold">Catagories</h3>
-            <li className="flex justify-between items-center group hover:bg-gray-50 px-2 py-1.5 rounded transition-colors">
-              <span className="text-sm font-medium text-gray-700 flex items-center">
+            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+              <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                 Work
               </span>
@@ -39,8 +41,8 @@ export default function Home() {
                 5
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-gray-50 px-2 py-1.5 rounded transition-colors">
-              <span className="text-sm font-medium text-gray-700 flex items-center">
+            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+              <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Personal
               </span>
@@ -48,8 +50,8 @@ export default function Home() {
                 3
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-gray-50 px-2 py-1.5 rounded transition-colors">
-              <span className="text-sm font-medium text-gray-700 flex items-center">
+            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+              <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 Shopping
               </span>
@@ -57,8 +59,8 @@ export default function Home() {
                 2
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-gray-50 px-2 py-1.5 rounded transition-colors">
-              <span className="text-sm font-medium text-gray-700 flex items-center">
+            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+              <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
                 Health
               </span>
@@ -75,39 +77,15 @@ export default function Home() {
         <main className="flex-grow p-6 overflow-y-auto">
           <h1 className="mb-6 text-2xl font-bold text-blue-500">Today Task</h1>
           <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:gap-4">
-            <TodoCard
-              title="Meeting with Team"
-              description="Discuss project updates and next steps."
-              time="10:00 AM"
-              priority="High"
-              category="Work"
-            />
-            <TodoCard
-              title="Meeting with Team"
-              description="Discuss project updates and next steps."
-              time="10:00 AM"
-              priority="High"
-              category="Work"
-            />
-            <TodoCard
-              title="Meeting with Team"
-              description="Discuss project updates and next steps."
-              time="10:00 AM"
-              priority="High"
-              category="Work"
-            />
-            <TodoCard
-              title="Meeting with Team"
-              description="Discuss project updates and next steps."
-              time="10:00 AM"
-              priority="High"
-              category="Work"
-            />
+            {tasks.map((tasks) => (
+              <TodoCard id={tasks.id} tasks={tasks} />
+            ))}
           </div>
-
-          <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md transition hover:bg-blue-600">
-            Add Task
-          </button>
+          <Link to={"/addtask"}>
+            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md transition hover:bg-blue-600">
+              Add Task
+            </button>
+          </Link>
         </main>
       </div>
     </>

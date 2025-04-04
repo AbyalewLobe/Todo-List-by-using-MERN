@@ -25,9 +25,11 @@ export default function NavBar() {
       {/* Sign Out Button */}
       <div className="flex gap-4">
         <IoIosNotifications className="size-6 self-center" />
-        <button className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md transition">
-          Sign Out
-        </button>
+        <Link to={"/login"}>
+          <button className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md transition">
+            Sign Out
+          </button>
+        </Link>
       </div>
     </nav>
   );

@@ -1,9 +1,9 @@
 import React from "react";
 
-const TodoCard = ({ title, description, time, priority, category }) => {
+const TodoCard = ({ tasks }) => {
   // Determine priority color
   const getPriorityColor = () => {
-    switch (priority.toLowerCase()) {
+    switch (tasks.priority.toLowerCase()) {
       case "high":
         return "bg-red-500";
       case "medium":
@@ -26,7 +26,9 @@ const TodoCard = ({ title, description, time, priority, category }) => {
     ];
     const index =
       Math.abs(
-        category.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+        tasks.catagories
+          .split("")
+          .reduce((acc, char) => acc + char.charCodeAt(0), 0)
       ) % colors.length;
     return colors[index];
   };
@@ -36,16 +38,18 @@ const TodoCard = ({ title, description, time, priority, category }) => {
       <div className="p-6">
         {/* Title and Priority */}
         <div className="flex justify-between items-start mb-3">
-          <h2 className="text-2xl font-bold text-gray-800 truncate">{title}</h2>
+          <h2 className="text-2xl font-bold text-gray-800 truncate">
+            {tasks.title}
+          </h2>
           <span
             className={`${getPriorityColor()} text-white text-xs font-bold px-2 py-1 rounded-full`}
           >
-            {priority}
+            {tasks.priority}
           </span>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 mb-4 line-clamp-2">{description}</p>
+        <p className="text-gray-600 mb-4 line-clamp-2">{tasks.description}</p>
 
         {/* Time - Made bold and attractive */}
         <div className="mb-4">
@@ -53,7 +57,7 @@ const TodoCard = ({ title, description, time, priority, category }) => {
             Due
           </span>
           <p className="text-xl font-bold text-gray-800">
-            <span className="text-indigo-600">{time}</span>
+            <span className="text-indigo-600">{tasks.date}</span>
           </p>
         </div>
 
@@ -62,7 +66,7 @@ const TodoCard = ({ title, description, time, priority, category }) => {
           <span
             className={`${getCategoryColor()} text-white text-xs font-bold px-3 py-1 rounded-full`}
           >
-            {category}
+            {tasks.catagories}
           </span>
           <div className="flex space-x-2">
             <button className="text-gray-500 hover:text-gray-700">

@@ -1,6 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-export default function AddTask() {
+export default function AddTask({ tasks, setTasks }) {
+  const [title, setTitle] = useState("");
+  const [catagories, setCatagories] = useState("work");
+  const [date, setDate] = useState("00:00");
+  const [priority, setPriority] = useState("Low");
+  const [description, setDescription] = useState("");
+  const [subtask, setSubTask] = useState("");
+  const [tags, setTags] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title || !catagories || !date || !priority || !description) return;
+
+    const newTask = {
+      id: crypto.randomUUID(),
+      title,
+      catagories,
+      date,
+      priority,
+      description,
+      subtask,
+      tags,
+    };
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    // console.log(tasks);
+    console.log([...tasks, newTask]);
+  };
+
   return (
     <div className="mt-20">
       <div className="add-task-page  max-w-xl mx-auto bg-white p-6  rounded-lg shadow-lg">
@@ -10,7 +38,11 @@ export default function AddTask() {
         </h2>
 
         {/* Form Section */}
-        <form id="task-form" className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <form
+          onSubmit={handleSubmit}
+          id="task-form"
+          className="grid grid-cols-1 md:grid-cols-2 gap-2"
+        >
           {/* Left Column */}
           <div className="form-group mb-2">
             <label
@@ -25,6 +57,7 @@ export default function AddTask() {
               placeholder="Enter task title"
               required
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
@@ -38,6 +71,7 @@ export default function AddTask() {
             <select
               id="task-category"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              onChange={(e) => setCatagories(e.target.value)}
             >
               <option value="Work">Work</option>
               <option value="Personal">Personal</option>
@@ -57,6 +91,7 @@ export default function AddTask() {
               type="date"
               id="task-due-date"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              onChange={(e) => setDate(e.target.value)}
             />
           </div>
 
@@ -70,6 +105,7 @@ export default function AddTask() {
             <select
               id="task-priority"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              onChange={(e) => setPriority(e.target.value)}
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -89,6 +125,7 @@ export default function AddTask() {
               id="task-description"
               placeholder="Enter task description"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+              onChange={(e) => setDescription(e.target.value)}
             ></textarea>
           </div>
 
@@ -104,6 +141,7 @@ export default function AddTask() {
                 type="text"
                 className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  subtask-input"
                 placeholder="Add a subtask"
+                onChange={(e) => setSubTask(e.target.value)}
               />
             </div>
           </div>
@@ -120,6 +158,7 @@ export default function AddTask() {
               id="task-tags"
               placeholder="Add tags (comma separated)"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  "
+              onChange={(e) => setTags(e.target.value)}
             />
           </div>
 
@@ -131,13 +170,15 @@ export default function AddTask() {
             >
               Add Task
             </button>
-            <button
-              type="button"
-              id="close-add-task-page"
-              className="w-1/2 p-1  bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              Cancel
-            </button>
+            <Link to={"/"}>
+              <button
+                type="button"
+                id="close-add-task-page"
+                className="w-full p-2  bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              >
+                Cancel
+              </button>
+            </Link>
           </div>
         </form>
       </div>
