@@ -1,14 +1,18 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const TodoCard = ({ task, setTasks }) => {
   const [deleteError, setDeleteError] = useState(null);
-
+  const navigate = useNavigate();
   const handleDelete = (id) => {
     try {
       setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
     } catch (error) {
       setDeleteError(error.message);
     }
+  };
+  const handleClick = () => {
+    navigate(`/updatetask/${task.id}`, { state: { task } });
   };
   // Determine priority color
   const getPriorityColor = () => {
@@ -78,7 +82,10 @@ const TodoCard = ({ task, setTasks }) => {
             {task.catagories}
           </span>
           <div className="flex space-x-2">
-            <button className="text-gray-500 hover:text-gray-700">
+            <button
+              onClick={() => handleClick(task.id)}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -88,6 +95,7 @@ const TodoCard = ({ task, setTasks }) => {
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
             </button>
+
             <button
               onClick={() => handleDelete(task.id)}
               className="text-gray-500 hover:text-red-500"

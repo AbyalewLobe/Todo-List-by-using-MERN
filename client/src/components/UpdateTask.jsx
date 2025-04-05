@@ -1,52 +1,45 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-export default function AddTask({ tasks, setTasks }) {
-  const [title, setTitle] = useState("");
-  const [catagories, setCatagories] = useState("Work");
-  const [date, setDate] = useState("00:00");
-  const [priority, setPriority] = useState("Low");
-  const [description, setDescription] = useState("");
-  const [subtask, setSubTask] = useState("");
-  const [tags, setTags] = useState("");
+export default function UpdateTask({ tasks, setTasks }) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { task } = location.state || {};
+
+  const [updateTask, setUpdateTask] = useState({
+    title: task.title,
+    description: task.description,
+    priority: task.priority,
+    catagories: task.catagories,
+    date: task.date,
+    tags: task.tags,
+    subTask: task.subtask,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateTask((prevTask) => ({
+      ...prevTask,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title || !catagories || !date || !priority || !description) return;
-
-    const newTask = {
-      id: crypto.randomUUID(),
-      title,
-      catagories,
-      date,
-      priority,
-      description,
-      subtask: subtask.split(/[/\s]+/),
-      tags: tags.split(/[/\s]+/),
-    };
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    // console.log(tasks);
-    console.log([...tasks, newTask]);
-    setTitle("");
-    setCatagories("work");
-    setDate("00:00");
-    setPriority("Low");
-    setDescription("");
-
-    setTags([]);
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => (t.id === task.id ? { ...t, ...updateTask } : t))
+    );
     navigate("/");
   };
 
   return (
     <div className="mt-20">
-      <div className="add-task-page  max-w-xl mx-auto bg-white p-6  rounded-lg shadow-lg">
-        {/* Title Section */}
+      <div className="add-task-page max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-blue-500 mb-4">
-          Add New Task
+          Update Task
         </h2>
 
-        {/* Form Section */}
         <form
           onSubmit={handleSubmit}
           id="task-form"
@@ -62,11 +55,13 @@ export default function AddTask({ tasks, setTasks }) {
             </label>
             <input
               type="text"
-              id="task-title"
+              id="title"
+              name="title"
               placeholder="Enter task title"
               required
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
-              onChange={(e) => setTitle(e.target.value)}
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
+              value={updateTask.title}
+              onChange={handleChange}
             />
           </div>
 
@@ -78,9 +73,11 @@ export default function AddTask({ tasks, setTasks }) {
               Category
             </label>
             <select
-              id="task-category"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
-              onChange={(e) => setCatagories(e.target.value)}
+              id="category"
+              name="catagories"
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
+              value={updateTask.catagories}
+              onChange={handleChange}
             >
               <option value="Work">Work</option>
               <option value="Personal">Personal</option>
@@ -98,9 +95,11 @@ export default function AddTask({ tasks, setTasks }) {
             </label>
             <input
               type="date"
-              id="task-due-date"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
-              onChange={(e) => setDate(e.target.value)}
+              id="date"
+              name="date"
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
+              value={updateTask.date}
+              onChange={handleChange}
             />
           </div>
 
@@ -112,9 +111,11 @@ export default function AddTask({ tasks, setTasks }) {
               Priority
             </label>
             <select
-              id="task-priority"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
-              onChange={(e) => setPriority(e.target.value)}
+              id="priority"
+              name="priority"
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
+              value={updateTask.priority}
+              onChange={handleChange}
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -131,10 +132,12 @@ export default function AddTask({ tasks, setTasks }) {
               Task Description
             </label>
             <textarea
-              id="task-description"
+              id="description"
+              name="description"
               placeholder="Enter task description"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
-              onChange={(e) => setDescription(e.target.value)}
+              value={updateTask.description}
+              onChange={handleChange}
             ></textarea>
           </div>
 
@@ -145,12 +148,15 @@ export default function AddTask({ tasks, setTasks }) {
             >
               Subtasks
             </label>
-            <div id="subtasks-container" className="space-y-2">
+            <div className="space-y-2">
               <input
                 type="text"
-                className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  subtask-input"
+                name="subTask"
+                id="subTask"
+                className="w-full p-1 border border-gray-300 rounded-md focus:outline-none subtask-input"
                 placeholder="Add a subtask"
-                onChange={(e) => setSubTask(e.target.value)}
+                value={updateTask.subTask}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -164,26 +170,27 @@ export default function AddTask({ tasks, setTasks }) {
             </label>
             <input
               type="text"
-              id="task-tags"
+              id="tags"
+              name="tags"
               placeholder="Add tags (comma separated)"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  "
-              onChange={(e) => setTags(e.target.value)}
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
+              value={updateTask.tags}
+              onChange={handleChange}
             />
           </div>
 
-          {/* Centered Submit and Cancel Buttons */}
           <div className="col-span-2 flex justify-center gap-6 mt-6">
             <button
               type="submit"
               className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Add Task
+              Update
             </button>
             <Link to={"/"}>
               <button
                 type="button"
-                id="close-add-task-page"
-                className="w-full p-2  bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                id="cancel"
+                className="w-full p-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               >
                 Cancel
               </button>
