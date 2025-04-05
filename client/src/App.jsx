@@ -10,7 +10,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home tasks={tasks} />} />
+        <Route path="/" element={<Home tasks={tasks} setTasks={setTasks} />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route

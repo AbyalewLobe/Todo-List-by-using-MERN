@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
-const TodoCard = ({ tasks }) => {
+const TodoCard = ({ task, setTasks }) => {
+  const [deleteError, setDeleteError] = useState(null);
+
+  const handleDelete = (id) => {
+    try {
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+    } catch (error) {
+      setDeleteError(error.message);
+    }
+  };
   // Determine priority color
   const getPriorityColor = () => {
-    switch (tasks.priority.toLowerCase()) {
+    switch (task.priority.toLowerCase()) {
       case "high":
         return "bg-red-500";
       case "medium":
@@ -26,7 +35,7 @@ const TodoCard = ({ tasks }) => {
     ];
     const index =
       Math.abs(
-        tasks.catagories
+        task.catagories
           .split("")
           .reduce((acc, char) => acc + char.charCodeAt(0), 0)
       ) % colors.length;
@@ -39,17 +48,17 @@ const TodoCard = ({ tasks }) => {
         {/* Title and Priority */}
         <div className="flex justify-between items-start mb-3">
           <h2 className="text-2xl font-bold text-gray-800 truncate">
-            {tasks.title}
+            {task.title}
           </h2>
           <span
             className={`${getPriorityColor()} text-white text-xs font-bold px-2 py-1 rounded-full`}
           >
-            {tasks.priority}
+            {task.priority}
           </span>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 mb-4 line-clamp-2">{tasks.description}</p>
+        <p className="text-gray-600 mb-4 line-clamp-2">{task.description}</p>
 
         {/* Time - Made bold and attractive */}
         <div className="mb-4">
@@ -57,7 +66,7 @@ const TodoCard = ({ tasks }) => {
             Due
           </span>
           <p className="text-xl font-bold text-gray-800">
-            <span className="text-indigo-600">{tasks.date}</span>
+            <span className="text-indigo-600">{task.date}</span>
           </p>
         </div>
 
@@ -66,7 +75,7 @@ const TodoCard = ({ tasks }) => {
           <span
             className={`${getCategoryColor()} text-white text-xs font-bold px-3 py-1 rounded-full`}
           >
-            {tasks.catagories}
+            {task.catagories}
           </span>
           <div className="flex space-x-2">
             <button className="text-gray-500 hover:text-gray-700">
@@ -79,7 +88,10 @@ const TodoCard = ({ tasks }) => {
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
             </button>
-            <button className="text-gray-500 hover:text-red-500">
+            <button
+              onClick={() => handleDelete(task.id)}
+              className="text-gray-500 hover:text-red-500"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -110,6 +122,7 @@ const TodoCard = ({ tasks }) => {
           </div>
         </div>
       </div>
+      <p>{deleteError}</p>
     </div>
   );
 };
