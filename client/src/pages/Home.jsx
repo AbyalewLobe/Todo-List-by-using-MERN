@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 import TodoCard from "../components/TodoCard";
 import { Link } from "react-router-dom";
 
-export default function Home({ tasks, setTasks }) {
+export default function Home({ tasks, setTasks, complete, setComplete }) {
   return (
     <>
       <NavBar />
@@ -78,7 +78,13 @@ export default function Home({ tasks, setTasks }) {
           <h1 className="mb-6 text-2xl font-bold text-blue-500">Today Task</h1>
           <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:gap-4">
             {tasks.map((task) => (
-              <TodoCard key={task.id} task={task} setTasks={setTasks} />
+              <TodoCard
+                key={task.id}
+                task={task}
+                setTasks={setTasks}
+                complete={complete}
+                setComplete={setComplete}
+              />
             ))}
           </div>
           <Link to={"/addtask"}>

@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 const TodoCard = ({ task, setTasks }) => {
   const [deleteError, setDeleteError] = useState(null);
   const navigate = useNavigate();
+
+  // Handle task deletion
   const handleDelete = (id) => {
     try {
       setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
@@ -11,9 +13,21 @@ const TodoCard = ({ task, setTasks }) => {
       setDeleteError(error.message);
     }
   };
+
+  // Handle task update
   const handleClick = () => {
     navigate(`/updatetask/${task.id}`, { state: { task } });
   };
+
+  // Handle task completion
+  const handleComplete = (id) => {
+    setTasks((prevTasks) => {
+      return prevTasks.map((task) =>
+        task.id === id ? { ...task, completed: true } : task
+      );
+    });
+  };
+
   // Determine priority color
   const getPriorityColor = () => {
     switch (task.priority.toLowerCase()) {
@@ -47,11 +61,21 @@ const TodoCard = ({ task, setTasks }) => {
   };
 
   return (
-    <div className="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
+    <div
+      className={`${
+        task.completed ? "bg-green-100 opacity-70 cursor-not-allowed" : ""
+      } max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1`}
+    >
       <div className="p-6">
         {/* Title and Priority */}
         <div className="flex justify-between items-start mb-3">
-          <h2 className="text-2xl font-bold text-gray-800 truncate">
+          <h2
+            className={`${
+              task.completed
+                ? "line-through text-gray-500"
+                : "text-2xl font-bold text-gray-800"
+            } truncate`}
+          >
             {task.title}
           </h2>
           <span
@@ -62,14 +86,26 @@ const TodoCard = ({ task, setTasks }) => {
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 mb-4 line-clamp-2">{task.description}</p>
+        <p
+          className={`${
+            task.completed ? "line-through text-gray-500" : "text-gray-600"
+          } mb-4 line-clamp-2`}
+        >
+          {task.description}
+        </p>
 
-        {/* Time - Made bold and attractive */}
+        {/* Time */}
         <div className="mb-4">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
             Due
           </span>
-          <p className="text-xl font-bold text-gray-800">
+          <p
+            className={`${
+              task.completed
+                ? "line-through text-gray-500"
+                : "text-xl font-bold text-gray-800"
+            }`}
+          >
             <span className="text-indigo-600">{task.date}</span>
           </p>
         </div>
@@ -77,14 +113,21 @@ const TodoCard = ({ task, setTasks }) => {
         {/* Category and Action Buttons */}
         <div className="flex justify-between items-center">
           <span
-            className={`${getCategoryColor()} text-white text-xs font-bold px-3 py-1 rounded-full`}
+            className={`${
+              task.completed ? "bg-green-300" : getCategoryColor()
+            } text-white text-xs font-bold px-3 py-1 rounded-full`}
           >
             {task.catagories}
           </span>
           <div className="flex space-x-2">
             <button
-              onClick={() => handleClick(task.id)}
-              className="text-gray-500 hover:text-gray-700"
+              onClick={handleClick}
+              className={`${
+                task.completed
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              disabled={task.completed}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +141,12 @@ const TodoCard = ({ task, setTasks }) => {
 
             <button
               onClick={() => handleDelete(task.id)}
-              className="text-gray-500 hover:text-red-500"
+              className={`${
+                task.completed
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-red-500"
+              }`}
+              disabled={task.completed}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +161,16 @@ const TodoCard = ({ task, setTasks }) => {
                 />
               </svg>
             </button>
-            <button className="text-gray-500 hover:text-green-500">
+
+            <button
+              onClick={() => handleComplete(task.id)}
+              className={`${
+                task.completed
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-green-500"
+              }`}
+              disabled={task.completed}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"

@@ -8,10 +8,21 @@ import UpdateTask from "./components/UpdateTask";
 import { useState } from "react";
 export default function App() {
   const [tasks, setTasks] = useState([]);
+  const [complete, setComplete] = useState(false);
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home tasks={tasks} setTasks={setTasks} />} />
+        <Route
+          path="/"
+          element={
+            <Home
+              tasks={tasks}
+              setTasks={setTasks}
+              setComplete={setComplete}
+              complete={complete}
+            />
+          }
+        />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route
