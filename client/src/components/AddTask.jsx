@@ -7,9 +7,38 @@ export default function AddTask({ tasks, setTasks }) {
   const [date, setDate] = useState("00:00");
   const [priority, setPriority] = useState("Low");
   const [description, setDescription] = useState("");
-  const [subtask, setSubTask] = useState("");
+  const [subtasks, setSubtasks] = useState([]);
+  const [subtaskInput, setSubtaskInput] = useState("");
   const [tags, setTags] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
   const navigate = useNavigate();
+
+  const handleAddSubtask = () => {
+    if (subtaskInput.trim() !== "") {
+      setSubtasks((prevSubtasks) => [...prevSubtasks, subtaskInput]);
+      setSubtaskInput("");
+    }
+  };
+
+  const handleEditSubtask = (index) => {
+    setEditingIndex(index);
+    setSubtaskInput(subtasks[index]); // Pre-fill input with the subtask to edit
+  };
+
+  const handleUpdateSubtask = () => {
+    if (subtaskInput.trim() !== "") {
+      const updatedSubtasks = [...subtasks];
+      updatedSubtasks[editingIndex] = subtaskInput; // Update the specific subtask
+      setSubtasks(updatedSubtasks);
+      setSubtaskInput("");
+      setEditingIndex(null);
+    }
+  };
+
+  const handleDeleteSubtask = (index) => {
+    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+    setSubtasks(updatedSubtasks);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,31 +51,27 @@ export default function AddTask({ tasks, setTasks }) {
       date,
       priority,
       description,
-      subtask: subtask.split(/[/\s]+/),
+      subtasks,
       tags: tags.split(/[/\s]+/),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
-    // console.log(tasks);
-    console.log([...tasks, newTask]);
     setTitle("");
-    setCatagories("work");
+    setCatagories("Work");
     setDate("00:00");
     setPriority("Low");
     setDescription("");
-
-    setTags([]);
+    setTags("");
+    setSubtasks([]);
     navigate("/");
   };
 
   return (
     <div className="mt-20">
-      <div className="add-task-page  max-w-xl mx-auto bg-white p-6  rounded-lg shadow-lg">
-        {/* Title Section */}
+      <div className="add-task-page max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-blue-500 mb-4">
           Add New Task
         </h2>
 
-        {/* Form Section */}
         <form
           onSubmit={handleSubmit}
           id="task-form"
@@ -65,7 +90,7 @@ export default function AddTask({ tasks, setTasks }) {
               id="task-title"
               placeholder="Enter task title"
               required
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
@@ -79,7 +104,7 @@ export default function AddTask({ tasks, setTasks }) {
             </label>
             <select
               id="task-category"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
               onChange={(e) => setCatagories(e.target.value)}
             >
               <option value="Work">Work</option>
@@ -99,7 +124,7 @@ export default function AddTask({ tasks, setTasks }) {
             <input
               type="date"
               id="task-due-date"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
@@ -113,7 +138,7 @@ export default function AddTask({ tasks, setTasks }) {
             </label>
             <select
               id="task-priority"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none "
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
               onChange={(e) => setPriority(e.target.value)}
             >
               <option value="Low">Low</option>
@@ -145,13 +170,59 @@ export default function AddTask({ tasks, setTasks }) {
             >
               Subtasks
             </label>
-            <div id="subtasks-container" className="space-y-2">
+            <div
+              id="subtasks-container"
+              className="space-y-2 flex flex-col gap-1"
+            >
               <input
                 type="text"
-                className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  subtask-input"
+                className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
                 placeholder="Add a subtask"
-                onChange={(e) => setSubTask(e.target.value)}
+                value={subtaskInput}
+                onChange={(e) => setSubtaskInput(e.target.value)}
               />
+              <button
+                type="button"
+                className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={
+                  editingIndex !== null ? handleUpdateSubtask : handleAddSubtask
+                }
+              >
+                {editingIndex !== null ? "Update Subtask" : "Add Subtask"}
+              </button>
+            </div>
+            <div className="border mt-3 rounded-md p-1">
+              {subtasks.map((subtask, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div className="p-1">{subtask}</div>
+                  <div className="flex gap-4 justify-between">
+                    <button onClick={() => handleEditSubtask(index)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-green-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                    </button>
+                    <button onClick={() => handleDeleteSubtask(index)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-red-700"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -166,12 +237,11 @@ export default function AddTask({ tasks, setTasks }) {
               type="text"
               id="task-tags"
               placeholder="Add tags (comma separated)"
-              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none  "
+              className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
               onChange={(e) => setTags(e.target.value)}
             />
           </div>
 
-          {/* Centered Submit and Cancel Buttons */}
           <div className="col-span-2 flex justify-center gap-6 mt-6">
             <button
               type="submit"
@@ -183,7 +253,7 @@ export default function AddTask({ tasks, setTasks }) {
               <button
                 type="button"
                 id="close-add-task-page"
-                className="w-full p-2  bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full p-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               >
                 Cancel
               </button>
