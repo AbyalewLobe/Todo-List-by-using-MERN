@@ -27,11 +27,15 @@ export default function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route
           path="/updatetask/:taskId"
-          element={<UpdateTask tasks={tasks} setTasks={setTasks} />}
+          element={
+            <UpdateTask title={"Update"} tasks={tasks} setTasks={setTasks} />
+          }
         />
         <Route
           path="/addtask"
-          element={<AddTask tasks={tasks} setTasks={setTasks} />}
+          element={
+            <UpdateTask title={"Add"} tasks={tasks} setTasks={setTasks} />
+          }
         />
       </Routes>
     </Router>

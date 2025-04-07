@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-export default function UpdateTask({ tasks, setTasks }) {
+export default function UpdateTask({ tasks, setTasks, title: t }) {
   const { taskId } = useParams(); // Assuming taskId is passed via URL params
   const taskToEdit = tasks.find((task) => task.id === taskId);
+
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [categories, setCategories] = useState(
-    taskToEdit?.catagories || "Work"
+    taskToEdit?.categories || "Work"
   );
-  const [date, setDate] = useState(taskToEdit?.date || "00:00");
+  const [date, setDate] = useState(
+    taskToEdit?.date instanceof Date
+      ? taskToEdit.date
+      : new Date(taskToEdit?.date || Date.now())
+  );
   const [priority, setPriority] = useState(taskToEdit?.priority || "Low");
   const [description, setDescription] = useState(taskToEdit?.description || "");
   const [subtasks, setSubtasks] = useState(taskToEdit?.subtasks || []);
@@ -39,32 +44,22 @@ export default function UpdateTask({ tasks, setTasks }) {
       setEditingIndex(null);
     }
   };
-  // Delete a subtask by index
-  const handleDeleteSubtask = (index) => {
-    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
-    setSubtasks(updatedSubtasks);
-  };
 
-  // Submit the updated task
-  const handleSubmit = (e) => {
+  const handleSubmitAdd = (e) => {
     e.preventDefault();
     if (!title || !categories || !date || !priority || !description) return;
 
-    const updatedTask = {
-      id: taskId,
+    const newTask = {
+      id: crypto.randomUUID(),
       title,
-      catagories: categories,
+      categories,
       date,
       priority,
       description,
-      subtasks, // Save the updated subtasks
-      tags: tags.split(/\s+/),
+      subtasks,
+      tags: tags.split(/[/\s]+/),
     };
-
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
-    );
-
+    setTasks((prevTasks) => [...prevTasks, newTask]);
     setTitle("");
     setCategories("Work");
     setDate("00:00");
@@ -75,10 +70,46 @@ export default function UpdateTask({ tasks, setTasks }) {
     navigate("/");
   };
 
+  // Delete a subtask by index
+  const handleDeleteSubtask = (index) => {
+    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+    setSubtasks(updatedSubtasks);
+  };
+
+  // Submit the updated task
+  const handleSubmitUpdate = (e) => {
+    e.preventDefault();
+    // if (!title || !categories || !date || !priority || !description) return;
+
+    const updatedTask = {
+      id: taskId,
+      title,
+      categories,
+      date,
+      priority,
+      description,
+      subtasks, // Save the updated subtasks
+      tags: tags.split(/\s+/),
+    };
+    console.log(updatedTask);
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
+    );
+
+    setTitle("");
+    setCategories("Work");
+    setDate(new Date());
+    setPriority("Low");
+    setDescription("");
+    setTags("");
+    setSubtasks([]);
+    navigate("/");
+  };
+
   useEffect(() => {
     if (taskToEdit) {
       setTitle(taskToEdit.title);
-      setCategories(taskToEdit.catagories);
+      setCategories(taskToEdit.categories);
       setDate(taskToEdit.date);
       setPriority(taskToEdit.priority);
       setDescription(taskToEdit.description);
@@ -91,14 +122,10 @@ export default function UpdateTask({ tasks, setTasks }) {
     <div className="mt-20">
       <div className="add-task-page max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-blue-500 mb-4">
-          Update Task
+          {t} Task
         </h2>
 
-        <form
-          onSubmit={handleSubmit}
-          id="task-form"
-          className="grid grid-cols-1 md:grid-cols-2 gap-2"
-        >
+        <form id="task-form" className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {/* Left Column */}
           <div className="form-group mb-2">
             <label
@@ -149,8 +176,8 @@ export default function UpdateTask({ tasks, setTasks }) {
               type="date"
               id="task-due-date"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={date.toISOString().split("T")[0]} // Properly formatted date for the input
+              onChange={(e) => setDate(new Date(e.target.value))}
             />
           </div>
 
@@ -208,6 +235,7 @@ export default function UpdateTask({ tasks, setTasks }) {
                 value={subtaskInput}
                 onChange={(e) => setSubtaskInput(e.target.value)}
               />
+
               <button
                 type="button"
                 className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -225,6 +253,7 @@ export default function UpdateTask({ tasks, setTasks }) {
                   <div className="flex gap-4 justify-between">
                     <button
                       type="button"
+                      disabled={index === editingIndex}
                       onClick={(e) => {
                         e.preventDefault();
                         handleEditSubtask(index);
@@ -284,12 +313,23 @@ export default function UpdateTask({ tasks, setTasks }) {
 
           {/* Centered Submit and Cancel Buttons */}
           <div className="col-span-2 flex justify-center gap-6 mt-6">
-            <button
-              type="submit"
-              className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Update Task
-            </button>
+            {t === "Add" ? (
+              <button
+                onClick={handleSubmitAdd}
+                type="submit"
+                className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Add Task
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmitUpdate}
+                type="submit"
+                className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Update Task
+              </button>
+            )}
             <Link to={"/"}>
               <button
                 type="button"

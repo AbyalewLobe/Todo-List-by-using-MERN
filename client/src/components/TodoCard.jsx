@@ -23,7 +23,7 @@ const TodoCard = ({ task, setTasks }) => {
   const handleComplete = (id) => {
     setTasks((prevTasks) => {
       return prevTasks.map((task) =>
-        task.id === id ? { ...task, completed: true } : task
+        task.id === id ? { ...task, completed: !task.completed } : task
       );
     });
   };
@@ -53,7 +53,7 @@ const TodoCard = ({ task, setTasks }) => {
     ];
     const index =
       Math.abs(
-        task.catagories
+        task.categories
           .split("")
           .reduce((acc, char) => acc + char.charCodeAt(0), 0)
       ) % colors.length;
@@ -63,7 +63,7 @@ const TodoCard = ({ task, setTasks }) => {
   return (
     <div
       className={`${
-        task.completed ? "bg-green-100 opacity-70 cursor-not-allowed" : ""
+        task.completed ? "bg-green-100 opacity-70 " : ""
       } max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1`}
     >
       <div className="p-6">
@@ -106,7 +106,7 @@ const TodoCard = ({ task, setTasks }) => {
                 : "text-xl font-bold text-gray-800"
             }`}
           >
-            <span className="text-indigo-600">{task.date}</span>
+            <span className="text-indigo-600">{task.date.toDateString()}</span>
           </p>
         </div>
 
@@ -117,17 +117,16 @@ const TodoCard = ({ task, setTasks }) => {
               task.completed ? "bg-green-300" : getCategoryColor()
             } text-white text-xs font-bold px-3 py-1 rounded-full`}
           >
-            {task.catagories}
+            {task.categories}
           </span>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 items-center ">
             <button
               onClick={handleClick}
               className={`${
                 task.completed
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-gray-300 hover:text-green-700 "
+                  : "text-gray-500 hover:text-green-700"
               }`}
-              disabled={task.completed}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -143,10 +142,9 @@ const TodoCard = ({ task, setTasks }) => {
               onClick={() => handleDelete(task.id)}
               className={`${
                 task.completed
-                  ? "text-gray-300 cursor-not-allowed"
+                  ? "text-gray-300 hover:text-red-700"
                   : "text-gray-500 hover:text-red-500"
               }`}
-              disabled={task.completed}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -162,28 +160,48 @@ const TodoCard = ({ task, setTasks }) => {
               </svg>
             </button>
 
-            <button
-              onClick={() => handleComplete(task.id)}
-              className={`${
-                task.completed
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-500 hover:text-green-500"
-              }`}
-              disabled={task.completed}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+            {task.completed ? (
+              <button
+                className="flex justify-center items-center w-10 h-10" // Set width and height for the button
+                onClick={() => handleComplete(task.id)}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500 hover:text-green-500 mt-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M14 3a1 1 0 00-1 1v4.586l-3.707-3.707a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414L15 8.586V4a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={() => handleComplete(task.id)}
+                className={`${
+                  task.completed
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "text-gray-500 hover:text-green-500"
+                }`}
+                disabled={task.completed}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>

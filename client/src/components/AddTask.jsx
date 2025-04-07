@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function AddTask({ tasks, setTasks }) {
   const [title, setTitle] = useState("");
   const [catagories, setCatagories] = useState("Work");
-  const [date, setDate] = useState("00:00");
+  const [date, setDate] = useState(new Date(Date.now()));
   const [priority, setPriority] = useState("Low");
   const [description, setDescription] = useState("");
   const [subtasks, setSubtasks] = useState([]);
@@ -125,7 +125,8 @@ export default function AddTask({ tasks, setTasks }) {
               type="date"
               id="task-due-date"
               className="w-full p-1 border border-gray-300 rounded-md focus:outline-none"
-              onChange={(e) => setDate(e.target.value)}
+              value={date.toISOString().split("T")[0]} // Properly formatted date for the input
+              onChange={(e) => setDate(new Date(e.target.value))}
             />
           </div>
 
@@ -196,7 +197,10 @@ export default function AddTask({ tasks, setTasks }) {
                 <div key={index} className="flex justify-between items-center">
                   <div className="p-1">{subtask}</div>
                   <div className="flex gap-4 justify-between">
-                    <button onClick={() => handleEditSubtask(index)}>
+                    <button
+                      disabled={index === editingIndex}
+                      onClick={() => handleEditSubtask(index)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 text-green-400"
