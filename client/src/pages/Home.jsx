@@ -1,38 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "../components/NavBar";
-
 import TodoCard from "../components/TodoCard";
 import { Link } from "react-router-dom";
+import ConfirmationModal from "../components/ConfiramtionModal";
 
-export default function Home({ tasks, setTasks, complete, setComplete }) {
+export default function Home({ tasks, setTasks }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [taskTitle, setTaskTitle] = useState("");
+  const handleDeleteRequest = (id, title) => {
+    setTaskToDelete(id);
+    setTaskTitle(title);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.id !== taskToDelete)
+    );
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <NavBar />
       <div className="flex p-5 h-screen w-full bg-gray-100 text-gray-900">
-        {/* Sidebar */}
-
         <aside className="w-64 bg-blue-500 text-white p-6 mt-4 rounded-lg flex flex-col">
           <h2 className="mb-4 text-xl font-bold">Dashboard</h2>
           <p className="mb-6 text-sm">Manage your tasks efficiently.</p>
+
           <div className="mb-8 flex flex-col gap-2">
             <h3 className="mb-2 text-lg font-semibold">Filters</h3>
-            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2 bg-[#1b3d60] text-white rounded-md hover:bg-white hover:text-blue-500">
               Today
             </button>
-            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2 bg-[#1b3d60] text-white rounded-md hover:bg-white hover:text-blue-500">
               Scheduled
             </button>
-            <button className="w-full py-2  bg-[#1b3d60] text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2 bg-[#1b3d60] text-white rounded-md hover:bg-white hover:text-blue-500">
               All Tasks
             </button>
-            <button className="w-full py-2 bg-[#1b3d60]  text-white rounded-md transition hover:bg-white hover:text-blue-500">
+            <button className="w-full py-2 bg-[#1b3d60] text-white rounded-md hover:bg-white hover:text-blue-500">
               Completed
             </button>
           </div>
-          {/* ////// catagories */}
+
           <div className="mb-8 flex flex-col gap-2">
-            <h3 className="mb-2 text-lg font-semibold">Catagories</h3>
-            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+            <h3 className="mb-2 text-lg font-semibold">Categories</h3>
+            <li className="flex justify-between items-center hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
               <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                 Work
@@ -41,7 +56,7 @@ export default function Home({ tasks, setTasks, complete, setComplete }) {
                 5
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+            <li className="flex justify-between items-center hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
               <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Personal
@@ -50,7 +65,7 @@ export default function Home({ tasks, setTasks, complete, setComplete }) {
                 3
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+            <li className="flex justify-between items-center hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
               <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 Shopping
@@ -59,7 +74,7 @@ export default function Home({ tasks, setTasks, complete, setComplete }) {
                 2
               </span>
             </li>
-            <li className="flex justify-between items-center group hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
+            <li className="flex justify-between items-center hover:bg-slate-800 px-2 py-1.5 rounded transition-colors">
               <span className="text-sm font-medium text-white flex items-center">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
                 Health
@@ -69,11 +84,8 @@ export default function Home({ tasks, setTasks, complete, setComplete }) {
               </span>
             </li>
           </div>
-
-          {/* ///// */}
         </aside>
 
-        {/* Main Content */}
         <main className="flex-grow p-6 overflow-y-auto">
           <h1 className="mb-6 text-2xl font-bold text-blue-500">Today Task</h1>
           <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:gap-4">
@@ -81,17 +93,25 @@ export default function Home({ tasks, setTasks, complete, setComplete }) {
               <TodoCard
                 key={task.id}
                 task={task}
-                setTasks={setTasks}
-                complete={complete}
-                setComplete={setComplete}
+                onDelete={handleDeleteRequest}
+                onComplete={setTasks}
               />
             ))}
           </div>
-          <Link to={"/addtask"}>
-            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md transition hover:bg-blue-600">
+          <Link to="/addtask">
+            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
               Add Task
             </button>
           </Link>
+
+          <ConfirmationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onConfirm={confirmDelete}
+            title="Confirm Deletion"
+            message="Are you sure you want to delete this task?"
+            taskTitle={taskTitle}
+          />
         </main>
       </div>
     </>
